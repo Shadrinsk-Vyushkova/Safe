@@ -145,7 +145,14 @@ class Safe(pygame.sprite.Sprite):
                     self.sq[y][x_pos] = 1
 
     def check_win(self):
-        return not all(self.sq)
+        sum = 0
+        for y in range(self.height):
+            for x in range(self.width):
+                sum = sum + self.sq[y][x]
+        if sum == 0:
+            return True
+        else:
+            return False
 
 
 safe = Safe(4, 4)
