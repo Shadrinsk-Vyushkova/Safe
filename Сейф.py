@@ -1,4 +1,5 @@
 import pygame
+import pygame_gui
 import os
 import sys
 import random
@@ -11,6 +12,8 @@ pygame.display.set_caption("Взлом сейфа")
 
 all_sprites = pygame.sprite.Group()
 sprite = pygame.sprite.Sprite()
+
+user_level = 0
 
 # Загрузка изображения
 def load_image(name, colorkey=None):
@@ -154,24 +157,60 @@ class Safe(pygame.sprite.Sprite):
         else:
             return False
 
+def game(user_level):
 
-safe = Safe(4, 4)
+    safe = Safe(user_level, user_level)
 
-running = True
-game_over = False
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-            exit()
-        if event.type == pygame.MOUSEBUTTONDOWN and not game_over:
-            safe.check_click(event.pos)
-    screen.fill((0, 0, 0))
-    # обновление рисунка сейфа.
-    all_sprites.draw(screen)
-    all_sprites.update()
-    if safe.check_win():
-        won(screen)
-        game_over = True
-    pygame.display.flip()
-pygame.display.quit()
+    running = True
+    game_over = False
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                exit()
+            if event.type == pygame.MOUSEBUTTONDOWN and not game_over:
+                safe.check_click(event.pos)
+        screen.fill((0, 0, 0))
+        # обновление рисунка сейфа.
+        all_sprites.draw(screen)
+        all_sprites.update()
+        if safe.check_win():
+            won(screen)
+            game_over = True
+        pygame.display.flip()
+    pygame.display.quit()
+
+lavel = {"Easy": 2, "Medium": 3, "Hard": 4}
+
+def menu():
+    bkgrnd = load_image("safe.png")
+    bkgrnd = pygame.transform.scale(bkgrnd, (600, 600))
+
+    manager = pygame_gui.UIManager((1000, 600))
+
+    dificulty = pygame_gui.elements.ui_drop_down_menu.UIDropDownMenu(
+        options_list = ["Easy", "Medium", "Hard"], starting_option = "Easy",
+        relative_rect=pygame.Rect((700, 100), (100, 50)),
+        manager=manager
+    )
+
+    clock = pygame.time.Clock()
+    show_menu = True
+    while show_menu:
+        time_delta = clock.tick(60) / 1000.0
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                show_menu = False
+                exit()
+            if event.type == pygame.USEREVENT:
+                if event.user_type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
+                    user_level = lavel[event.text]
+                    show_menu = False
+                    game(user_level)
+            manager.process_events(event)
+        manager.update(time_delta)
+        screen.blit(bkgrnd, (0, 0))
+        manager.draw_ui(screen)
+        pygame.display.update()
+
+menu()
