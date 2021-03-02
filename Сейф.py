@@ -190,7 +190,7 @@ def menu():
 
     dificulty = pygame_gui.elements.ui_drop_down_menu.UIDropDownMenu(
         options_list = ["Easy", "Medium", "Hard"], starting_option = "Easy",
-        relative_rect=pygame.Rect((700, 100), (100, 50)),
+        relative_rect=pygame.Rect((700, 100), (130, 70)),
         manager=manager
     )
 
